@@ -23,6 +23,7 @@ RUN sed -i 's/\/sys\//\/dockerhost\/sys\//g' /etc/rpimonitor/template/* && \
     sed -i '/^web.status.1.content.8.line/ d' /etc/rpimonitor/template/network.conf && \
     sed -i '/^#web.status.1.content.8.line/s/^#//g' /etc/rpimonitor/template/network.conf && \
     sed -i 's/\#dynamic/dynamic/g' /etc/rpimonitor/template/network.conf && \
+    sed -i 's/\#daemon.readonly=0/daemon.readonly=1/g' /etc/rpimonitor/daemon.conf && \
     sed -i 's/\#web.statistics/web.statistics/g' /etc/rpimonitor/template/network.conf
 
 #RUN sed -i 's_#daemon.shellinabox=https://127.0.0.1:4200_daemon.shellinabox=http://172.20.0.1:19930_g' /etc/rpimonitor/daemon.conf && \
