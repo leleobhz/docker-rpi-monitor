@@ -1,8 +1,16 @@
 #!/bin/bash
 
 # Load shared libraries from /opt/vc/lib
-echo /opt/vc/lib > /etc/ld.so.conf.d/00-vmcs.conf
-ldconfig
+if [[ -f /lib/ld-musl-* ]]; then
+	
+	MUSL_ARCH=$(ls /lib/ld-musl-*.so.1 | xargs basename | sed 's,ld-musl-,,g' | sed 's,.so.*,,g')
+
+	echo "/lib:/usr/local/lib:/usr/lib:/opt/vc/lib/" > /etc/ld-musl-$(MUSL_ARCH).path
+	ldconfig
+else
+	echo /opt/vc/lib > /etc/ld.so.conf.d/00-vmcs.conf
+	ldconfig
+fi
 
 # Link /opt/vc/bin binaries to /usr/bin
 ln -s /opt/vc/bin/raspividyuv /usr/bin/raspividyuv
@@ -20,13 +28,14 @@ ln -s /opt/vc/bin/dtoverlay-post /usr/bin/dtoverlay-post
 ln -s /opt/vc/bin/dtoverlay /usr/bin/dtoverlay
 ln -s /opt/vc/bin/dtparam /usr/bin/dtparam
 
-# Insert Docker Host hostname into raspbian.conf
-DOCKERHOST=$(cat /dockerhost/etc/hostname)
-sed -i "s/'+data.hostname+'/$DOCKERHOST/g" /etc/rpimonitor/template/raspbian.conf
+# Enable entropy
+sed -i 's,\#include=/etc/rpimonitor/template/entropy.conf,include=/etc/rpimonitor/template/entropy.conf,g' /etc/rpimonitor/template/raspbian.conf
 
 # Update RPI Monitor Package Status
-/etc/init.d/rpimonitor install_auto_package_status_update
-/usr/share/rpimonitor/scripts/updatePackagesStatus.pl
+if [[ -f /lib/lsb/init-functions ]]; then
+	/etc/init.d/rpimonitor install_auto_package_status_update
+	/usr/share/rpimonitor/scripts/updatePackagesStatus.pl
+fi
 
 # Start RPI Monitor
 /usr/bin/rpimonitord -v
