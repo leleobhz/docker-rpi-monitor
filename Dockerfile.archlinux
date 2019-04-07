@@ -1,4 +1,4 @@
-FROM archlinux/base
+FROM agners/archlinuxarm
 
 LABEL maintainer="Leonardo Amaral <docker@leonardoamaral.com.br>"
 
