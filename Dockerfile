@@ -1,4 +1,4 @@
-FROM debian/stable-slim
+FROM debian:stable-slim
 
 LABEL maintainer="Leonardo Amaral <docker@leonardoamaral.com.br>"
 
