@@ -1,11 +1,11 @@
-FROM resin/rpi-raspbian:latest
+FROM debian/stable-slim
 
-LABEL maintainer="Daniel Steiner / <djsteiner93@gmail.com>"
+LABEL maintainer="Leonardo Amaral <docker@leonardoamaral.com.br>"
 
-ENV  DEBIAN_FRONTEND noninteractive
+ENV DEBIAN_FRONTEND noninteractive
 
 # Install RPI-Monitor form Xavier Berger's repository
-RUN apt-get -y update && apt-get -y install wget apt-utils && \
+RUN apt-get -y update && apt-get -y dist-upgrade && apt-get -y install wget apt-utils && \
     apt-get install -y --no-install-recommends dirmngr apt-transport-https ca-certificates libraspberrypi-bin && \
     apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 2C0D3C0F && \
     wget http://goo.gl/vewCLL -O /etc/apt/sources.list.d/rpimonitor.list && \
@@ -24,8 +24,6 @@ RUN sed -i 's/\/sys\//\/dockerhost\/sys\//g' /etc/rpimonitor/template/* && \
     sed -i '/^#web.status.1.content.8.line/s/^#//g' /etc/rpimonitor/template/network.conf && \
     sed -i 's/\#dynamic/dynamic/g' /etc/rpimonitor/template/network.conf && \
     sed -i 's/\#web.statistics/web.statistics/g' /etc/rpimonitor/template/network.conf
-
-# ADD run.sh /run.sh
 
 #RUN sed -i 's_#daemon.shellinabox=https://127.0.0.1:4200_daemon.shellinabox=http://172.20.0.1:19930_g' /etc/rpimonitor/daemon.conf && \
 #    sed -i 's_#web.addons.1.name=Shellinabox_web.addons.2.name=Shellinabox_g' /etc/rpimonitor/data.conf && \
